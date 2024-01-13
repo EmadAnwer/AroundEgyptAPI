@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Language {
+  id              BigInt            @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  code            String            @db.VarChar(10)
+  governorateData GovernorateData[]
+  tageData        TagData[]
+  palceData       PlaceData[]
+}
+
+model Governorate {
+  id       BigInt            @id @default(autoincrement())
+  imageUrl String            @db.VarChar(255)
+  data     GovernorateData[]
+  places   Place[]
+}
+
+model GovernorateData {
+  id            BigInt      @id @default(autoincrement())
+  name          String      @db.VarChar(255)
+  governorate   Governorate @relation(fields: [governorateId], references: [id])
+  governorateId BigInt
+  language      Language    @relation(fields: [languageId], references: [id])
+  languageId    BigInt
+}
+
+model User {
+  id        BigInt   @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  phone     String   @db.VarChar(255)
+  imageUrl  String   @db.VarChar(255)
+  country   String   @db.VarChar(255)
+  email     String   @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updateAt  DateTime @default(now())
+
+  Places         Place[]
+  PlaceImages    PlaceImage[]
+  PlaceReviews   PlaceReview[]
+  FavoritePlaces Favorite[]
+  Posts          Post[]
+  Likes          Like[]
+  Comments       Comment[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Tag {
+  id BigInt @id @default(autoincrement())
+
+  Data   TagData[]
+  Places PlaceTag[]
+}
+
+model TagData {
+  id   BigInt @id @default(autoincrement())
+  name String @db.VarChar(255)
+
+  Tag        Tag      @relation(fields: [tagId], references: [id])
+  tagId      BigInt
+  Language   Language @relation(fields: [languageId], references: [id])
+  languageId BigInt
+}
+
+model Place {
+  id            BigInt      @id @default(autoincrement())
+  governorate   Governorate @relation(fields: [governorateId], references: [id])
+  governorateId BigInt
+  userId        BigInt
+  User          User        @relation(fields: [userId], references: [id])
+  imageUrl      String      @db.VarChar(255)
+
+  Data           PlaceData[]
+  Images         PlaceImage[]
+  Reviews        PlaceReview[]
+  Tags           PlaceTag[]
+  FavoritePlaces Favorite[]
+}
+
+model PlaceData {
+  id          BigInt @id @default(autoincrement())
+  name        String @db.VarChar(255)
+  description String @db.Text
+
+  Place      Place    @relation(fields: [placeId], references: [id])
+  placeId    BigInt
+  Language   Language @relation(fields: [languageId], references: [id])
+  languageId BigInt
+}
+
+model PlaceImage {
+  id        BigInt   @id @default(autoincrement())
+  imageUrl  String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  Place   Place  @relation(fields: [placeId], references: [id])
+  placeId BigInt
+  User    User   @relation(fields: [userId], references: [id])
+  userId  BigInt
+}
+
+model PlaceReview {
+  id      BigInt @id @default(autoincrement())
+  content String @db.Text
+  rate    Float
+
+  Place   Place  @relation(fields: [placeId], references: [id])
+  placeId BigInt
+  User    User   @relation(fields: [userId], references: [id])
+  userId  BigInt
+}
+
+model PlaceTag {
+  id BigInt @id @default(autoincrement())
+
+  tagId   BigInt
+  Tag     Tag    @relation(fields: [tagId], references: [id])
+  placeId BigInt
+  Place   Place  @relation(fields: [placeId], references: [id])
+}
+
+model Favorite {
+  id BigInt @id @default(autoincrement())
+
+  placeId BigInt
+  Place   Place  @relation(fields: [placeId], references: [id])
+  userId  BigInt
+  User    User   @relation(fields: [userId], references: [id])
+}
+
+model Post {
+  id       BigInt @id @default(autoincrement())
+  content  String @db.Text
+  imageUrl String @db.VarChar(255)
+
+  User     User      @relation(fields: [userId], references: [id])
+  userId   BigInt
+  Likes    Like[]
+  Comments Comment[]
+}
+
+model Like {
+  id BigInt @id @default(autoincrement())
+
+  userId BigInt
+  User   User   @relation(fields: [userId], references: [id])
+  postId BigInt
+  Post   Post   @relation(fields: [postId], references: [id])
+}
+
+model Comment {
+  id      BigInt @id @default(autoincrement())
+  comment String @db.Text
+
+  userId BigInt
+  User   User   @relation(fields: [userId], references: [id])
+  postId BigInt
+  Post   Post   @relation(fields: [postId], references: [id])
+}
