@@ -8,24 +8,27 @@ datasource db {
 }
 
 model Language {
-  id              BigInt            @id @default(autoincrement())
-  name            String            @db.VarChar(255)
-  code            String            @db.VarChar(10)
+  id   BigInt @id @default(autoincrement())
+  name String @db.VarChar(255)
+  code String @db.VarChar(10)
+
   governorateData GovernorateData[]
   tageData        TagData[]
   palceData       PlaceData[]
 }
 
 model Governorate {
-  id       BigInt            @id @default(autoincrement())
-  imageUrl String            @db.VarChar(255)
-  data     GovernorateData[]
-  places   Place[]
+  id       BigInt @id @default(autoincrement())
+  imageUrl String @db.VarChar(255)
+
+  data   GovernorateData[]
+  places Place[]
 }
 
 model GovernorateData {
-  id            BigInt      @id @default(autoincrement())
-  name          String      @db.VarChar(255)
+  id   BigInt @id @default(autoincrement())
+  name String @db.VarChar(255)
+
   governorate   Governorate @relation(fields: [governorateId], references: [id])
   governorateId BigInt
   language      Language    @relation(fields: [languageId], references: [id])
