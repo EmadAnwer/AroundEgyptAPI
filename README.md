@@ -14,4 +14,4 @@ AronudEgyptAPI is a RESTful API that provides information about the most famous 
 ## Database design
 
 #### link to the database design [here](https://dbdiagram.io/d/Around-Egypt-65a29631ac844320aed806d6)
-![Database design](./images/DatabaseDesign.svg)
+![Database design](./images/DatabaseDiagram.svg)
